@@ -31,12 +31,13 @@ import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;
 
-import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.ui.ProjectActivity;
 import org.catrobat.catroid.uiespresso.testsuites.Cat;
 import org.catrobat.catroid.uiespresso.testsuites.Level;
+import org.catrobat.catroid.uiespresso.util.FileTestUtils;
+import org.catrobat.catroid.uiespresso.util.UiTestUtils;
 import org.catrobat.catroid.uiespresso.util.rules.BaseActivityInstrumentationRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,8 +60,14 @@ public class SpriteListFragmentNewObjectFromSelection {
 
 	@Before
 	public void setUp() throws Exception {
-		createNoObjectsProject();
+		UiTestUtils.createNoObjectsProject(SpriteListFragmentNewObjectFromSelection.class.getSimpleName());
 		baseActivityTestRule.launchActivity();
+	}
+
+	@After
+	public void tearDown() throws IOException {
+		baseActivityTestRule.finishActivity();
+		UiTestUtils.deleteProjectFromStorage(SpriteListFragmentNewObjectFromSelection.class.getSimpleName());
 	}
 
 	@Category({Cat.AppUi.class, Level.Detailed.class})
@@ -71,7 +78,7 @@ public class SpriteListFragmentNewObjectFromSelection {
 
 		try {
 			testfile = File.createTempFile("Test", ".png", null);
-			filename = filenameWithoutExtension(testfile.getName());
+			filename = FileTestUtils.filenameWithoutExtension(testfile.getName());
 		}catch (IOException e) {
 			Assert.assertNull(e);
 		}
@@ -89,15 +96,5 @@ public class SpriteListFragmentNewObjectFromSelection {
 
 		onView(withText(filename))
 				.check(matches(isDisplayed()));
-	}
-
-	private void createNoObjectsProject() {
-		Project project = new Project(InstrumentationRegistry.getTargetContext(), "SpriteListFragmentNewObjectFromSelection");
-		ProjectManager.getInstance().setProject(project);
-		ProjectManager.getInstance().setCurrentlyEditedScene(project.getDefaultScene());
-	}
-
-	private String filenameWithoutExtension(String filename) {
-		return filename.substring(0, filename.indexOf("."));
 	}
 }

@@ -30,6 +30,7 @@ import org.catrobat.catroid.ui.ProjectActivity;
 import org.catrobat.catroid.uiespresso.content.brick.utils.BrickTestUtils;
 import org.catrobat.catroid.uiespresso.ui.fragment.rvutils.RecyclerViewActions;
 import org.catrobat.catroid.uiespresso.util.rules.BaseActivityInstrumentationRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +42,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-
 import static org.catrobat.catroid.uiespresso.ui.fragment.rvutils.RecyclerViewInteractionWrapper.onRecyclerView;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
@@ -56,6 +56,11 @@ public class SpriteListFragmentExplanationTextProjectWithObjectTest {
 	public void setUp() throws Exception {
 		BrickTestUtils.createProjectAndGetStartScript("SpriteListFragmentExplanationTextProjectWithObjectTest");
 		baseActivityTestRule.launchActivity();
+	}
+
+	@After
+	public void tearDown() {
+		baseActivityTestRule.finishActivity();
 	}
 
 	@Test

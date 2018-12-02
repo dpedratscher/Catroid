@@ -34,8 +34,12 @@ import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.StartScript;
+import org.catrobat.catroid.io.StorageOperations;
+import org.catrobat.catroid.utils.PathBuilder;
 import org.hamcrest.Matcher;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -90,6 +94,16 @@ public final class UiTestUtils {
 		ProjectManager.getInstance().setProject(project);
 		ProjectManager.getInstance().setCurrentSprite(sprite);
 		return project;
+	}
+
+	public static void createNoObjectsProject(String projectName) {
+		Project project = new Project(InstrumentationRegistry.getTargetContext(), projectName);
+		ProjectManager.getInstance().setProject(project);
+		ProjectManager.getInstance().setCurrentlyEditedScene(project.getDefaultScene());
+	}
+
+	public static void deleteProjectFromStorage(String projectName) throws IOException{
+		StorageOperations.deleteDir(new File(PathBuilder.buildProjectPath(projectName)));
 	}
 
 	public static ViewInteraction onToast(Matcher<View> viewMatcher) {

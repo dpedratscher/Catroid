@@ -27,15 +27,17 @@ import android.app.Activity;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.ui.ProjectActivity;
+import org.catrobat.catroid.uiespresso.util.UiTestUtils;
 import org.catrobat.catroid.uiespresso.util.rules.BaseActivityInstrumentationRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -43,7 +45,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsNot.not;
 
@@ -55,10 +56,15 @@ public class SpriteListFragmentExplanationTextNoObjectsProjectTest {
 
 	@Before
 	public void setUp() throws Exception {
-		createNoObjectsProject();
+		UiTestUtils.createNoObjectsProject(SpriteListFragmentExplanationTextNoObjectsProjectTest.class.getSimpleName());
 		baseActivityTestRule.launchActivity();
 	}
 
+	@After
+	public void tearDown() throws IOException {
+		baseActivityTestRule.finishActivity();
+		UiTestUtils.deleteProjectFromStorage(SpriteListFragmentExplanationTextNoObjectsProjectTest.class.getSimpleName());
+	}
 	@Test
 	public void testEmptyViewOnStart() {
 		onView(withId(R.id.empty_view))
@@ -89,11 +95,5 @@ public class SpriteListFragmentExplanationTextNoObjectsProjectTest {
 				.check(matches(not(isDisplayed())));
 		onView(withText(R.string.fragment_sprite_text_description))
 				.check(matches(not(isDisplayed())));
-	}
-
-	private void createNoObjectsProject() {
-		Project project = new Project(InstrumentationRegistry.getTargetContext(), "SpriteListFragmentExplanationTextNoObjectsProjectTest");
-		ProjectManager.getInstance().setProject(project);
-		ProjectManager.getInstance().setCurrentlyEditedScene(project.getDefaultScene());
 	}
 }

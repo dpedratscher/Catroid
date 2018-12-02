@@ -51,4 +51,8 @@ public final class FileTestUtils {
 		assertFalse("File exists: " + dir.getAbsolutePath() + "/" + file.getName(),
 				new File(dir.getAbsolutePath(), file.getName()).exists());
 	}
+
+	public static String filenameWithoutExtension(String filename) {
+		return filename.substring(0, filename.indexOf("."));
+	}
 }

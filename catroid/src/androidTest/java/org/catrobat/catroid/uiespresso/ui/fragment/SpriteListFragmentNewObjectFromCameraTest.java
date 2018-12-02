@@ -27,18 +27,20 @@ import android.app.Activity;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.ui.ProjectActivity;
 import org.catrobat.catroid.uiespresso.testsuites.Cat;
 import org.catrobat.catroid.uiespresso.testsuites.Level;
+import org.catrobat.catroid.uiespresso.util.UiTestUtils;
 import org.catrobat.catroid.uiespresso.util.rules.BaseActivityInstrumentationRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -54,8 +56,14 @@ public class SpriteListFragmentNewObjectFromCameraTest {
 
 	@Before
 	public void setUp() throws Exception {
-		createNoObjectsProject();
+		UiTestUtils.createNoObjectsProject(SpriteListFragmentNewObjectFromCameraTest.class.getSimpleName());
 		baseActivityTestRule.launchActivity();
+	}
+
+	@After
+	public void tearDown() throws IOException {
+		baseActivityTestRule.finishActivity();
+		UiTestUtils.deleteProjectFromStorage(SpriteListFragmentNewObjectFromCameraTest.class.getSimpleName());
 	}
 
 	@Category({Cat.AppUi.class, Level.Detailed.class})
@@ -69,13 +77,7 @@ public class SpriteListFragmentNewObjectFromCameraTest {
 			}
 		});
 
-		onView(withText(R.string.new_sprite_default_object_name))
+		onView(withText(R.string.default_object_name))
 				.check(matches(isDisplayed()));
-	}
-
-	private void createNoObjectsProject() {
-		Project project = new Project(InstrumentationRegistry.getTargetContext(), "SpriteListFragmentNewObjectFromCameraTest");
-		ProjectManager.getInstance().setProject(project);
-		ProjectManager.getInstance().setCurrentlyEditedScene(project.getDefaultScene());
 	}
 }

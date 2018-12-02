@@ -195,6 +195,7 @@ public class ProjectActivity extends BaseCastActivity {
 		}
 
 		Uri uri;
+		String fileName;
 
 		switch (requestCode) {
 			case PreStageActivity.REQUEST_RESOURCES_INIT:
@@ -202,39 +203,38 @@ public class ProjectActivity extends BaseCastActivity {
 				break;
 			case SPRITE_POCKET_PAINT:
 				uri = Uri.fromFile(new File(data.getStringExtra(EXTRA_PICTURE_PATH_POCKET_PAINT)));
-				addSpriteFromUri(uri);
+				addSpriteFromUri(uri,getString(R.string.default_object_name), getString(R.string.default_look_name));
 				break;
 			case SPRITE_LIBRARY:
 				uri = Uri.fromFile(new File(data.getStringExtra(MEDIA_FILE_PATH)));
-				addSpriteFromUri(uri);
+				fileName = getSanitizedFileName(uri);
+				addSpriteFromUri(uri, fileName, fileName);
 				break;
 			case SPRITE_FILE:
 				uri = data.getData();
-				addSpriteFromUri(uri);
+				fileName = getSanitizedFileName(uri);
+				addSpriteFromUri(uri, fileName, fileName);
 				break;
 			case SPRITE_CAMERA:
 				uri = new ImportFromCameraLauncher(this).getCacheCameraUri();
-				addSpriteFromUri(uri);
+				addSpriteFromUri(uri, getString(R.string.default_object_name), getString(R.string.default_look_name));
 				break;
 		}
 	}
 
-	public void addSpriteFromUri(final Uri uri) {
+	private String getSanitizedFileName(Uri uri) {
+		return StorageOperations.getSanitizedFileName(StorageOperations.resolveFileName(getContentResolver(), uri));
+	}
+
+	public void addSpriteFromUri(final Uri uri, String objectName, final String lookName) {
 		final Scene currentScene = ProjectManager.getInstance().getCurrentlyEditedScene();
 
-		String name = StorageOperations.resolveFileName(getContentResolver(), uri);
-		if (name == null) {
-			name = getString(R.string.default_look_name);
-		} else {
-			name = StorageOperations.getSanitizedFileName(name);
-		}
-		name = new UniqueNameProvider().getUniqueNameInNameables(name, currentScene.getSpriteList());
-		final String lookName = name;
+		objectName = new UniqueNameProvider().getUniqueNameInNameables(objectName, currentScene.getSpriteList());
 
 		TextInputDialog.Builder builder = new TextInputDialog.Builder(this);
 
 		builder.setHint(getString(R.string.sprite_name_label))
-				.setText(name)
+				.setText(objectName)
 				.setTextWatcher(new NewItemTextWatcher<>(currentScene.getSpriteList()))
 				.setPositiveButton(getString(R.string.ok), new TextInputDialog.OnClickListener() {
 					@Override
