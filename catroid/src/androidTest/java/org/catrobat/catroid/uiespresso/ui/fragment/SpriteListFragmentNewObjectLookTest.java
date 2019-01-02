@@ -24,13 +24,17 @@
 package org.catrobat.catroid.uiespresso.ui.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
+import org.catrobat.catroid.ui.ImportFromCameraLauncher;
 import org.catrobat.catroid.ui.ProjectActivity;
 import org.catrobat.catroid.ui.WebViewActivity;
 import org.catrobat.catroid.uiespresso.testsuites.Cat;
@@ -44,21 +48,29 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import java.io.File;
 import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.actionWithAssertions;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.catrobat.catroid.uiespresso.ui.fragment.rvutils.RecyclerViewInteractionWrapper.onRecyclerView;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class SpriteListFragmentNewObjectLookTest {
 
 	private File tmpTestFile;
 	private String tmpTestFileName;
+	private File  tmpCameraFile;
 
 	@Rule
 	public BaseActivityInstrumentationRule<ProjectActivity> baseActivityTestRule = new
@@ -110,6 +122,12 @@ public class SpriteListFragmentNewObjectLookTest {
 			}
 		});
 
+//TODO which one? tmp file or mock?		Uri cameraCache = new ImportFromCameraLauncher(baseActivityTestRule.getActivity()).getCacheCameraUri();
+//TODO		createTmpCameraFile(cameraCache);
+
+//TODO		ImportFromCameraLauncher cameraLauncher = mock(ImportFromCameraLauncher.class);
+// TODO		when(cameraLauncher.getCacheCameraUri()).thenReturn(Uri.fromFile(tmpTestFile));
+
 		clickOK();
 		onView(withText(R.string.default_object_name))
 				.perform(click());
@@ -128,7 +146,7 @@ public class SpriteListFragmentNewObjectLookTest {
 			public void run() {
 				baseActivityTestRule.getActivity()
 						.onActivityResult(ProjectActivity.SPRITE_LIBRARY, Activity.RESULT_OK,
-								new Intent(Intent.ACTION_VIEW).putExtra(WebViewActivity.MEDIA_FILE_PATH, tmpTestFileName));
+								new Intent(Intent.ACTION_VIEW).putExtra(WebViewActivity.MEDIA_FILE_PATH, tmpTestFile.getAbsolutePath()));
 			}
 		});
 
@@ -172,5 +190,10 @@ public class SpriteListFragmentNewObjectLookTest {
 	private void clickOK() {
 		onView(withText(R.string.ok))
 				.perform(click());
+	}
+
+	private void createTmpCameraFile(Uri uri) throws IOException {
+		tmpCameraFile = File.createTempFile(UiTestUtils.getResourcesString(R.string.default_look_name),
+				".jpg", new File(uri.getPath()));
 	}
 }
